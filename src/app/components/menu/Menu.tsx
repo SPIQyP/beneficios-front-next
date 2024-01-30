@@ -6,7 +6,7 @@ const Menu = () => {
             <nav>
                 <div className="flex justify-between">
                     <Image className="" src={"/img/logos/logo.png"} alt={"logo"} width={130} height={30}/>
-                    <div>
+                    <div className="hidden lg:block">
                         <input className="rounded-xl px-2 border text-xl" placeholder="Buscar beneficio"/>
                     </div>
                     <button className="btn">Ingresar</button>

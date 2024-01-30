@@ -7,9 +7,19 @@ import 'swiper/css/pagination';
 import Image from "next/image";
 import { Navigation, Pagination } from "swiper/modules";
 
-const Banner = () => {
-    return(
+interface BannersProps {
+  content: any[];
+}
+
+const Banner = ({content}:BannersProps) => {
+      return(
         <div>
+          {/* {
+            content.map((c:any,i:number) => (
+              <p key={i} className="text-black">{c.url}</p>
+            ))
+          } */}
+          
           <Swiper
             className={`swiperBenefits`}   
             navigation={true}
@@ -17,10 +27,11 @@ const Banner = () => {
             modules={[Navigation,Pagination]}            
           >
             {
-            [1,2,3].map( (x , i) => (
+            content.map( (b:any , i:number) => (
                 <SwiperSlide key={i}>
-                    <div>
-                        <Image src={'/img/beneficios/banner1.webp'} alt="banner" width={1500} height={500}/>
+                    <div className="w-full">
+                        <Image className="hidden lg:block" src={b.desktopImage} alt="banner" width={1500} height={500}/>
+                        <Image className="lg:hidden w-full" src={b.mobileImage} alt="banner" width={338} height={438}/>
                     </div>
                 </SwiperSlide> 
             ))

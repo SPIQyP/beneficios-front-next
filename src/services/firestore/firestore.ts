@@ -1,25 +1,50 @@
 import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { initializeFirestore } from "firebase-admin/firestore";
+import { getFirestore, initializeFirestore } from "firebase-admin/firestore";
+import { firebaseApp } from "../firebase/firebase";
 
-const sa = {}
 
-const app =
-  getApps().length > 0
-    ? getApps()[0]
-    : initializeApp({
-        credential: cert(sa),
-      });
-
-const db = initializeFirestore(app);
+const db = getFirestore(firebaseApp)
 
 export const getBanners = async () => {
-    const docRef = db.collection('banners');
-    const bannersRef = await docRef.get();
-    if (bannersRef.empty) {
+    const banners = (await db.collection('banners').get()).docs.map(doc => doc.data());
+   
+    if (banners.length === 0) {
+        return [];
+    }
+    return banners;
+}
+
+export const getCompanies = async () => {
+    const companies = (await db.collection('companies').get()).docs.map(doc => {
+        return {
+            id:doc.id,
+            data: doc.data()
+        }
+    });
+
+    if (companies.length === 0 ){
         return [];
     }
 
-    const banners = bannersRef.docs.map(doc => doc.data());
-    return banners
+    return companies;
 }
 
+export const getCompany = async (id:string) => {
+    const companyRef = db.collection('companies');
+    const companyRes = (await companyRef.doc(id).get()).data();
+    return companyRes;
+}
+
+export const getBenefitsByCompany = async (companyId:string) => {
+    const companyRef = db.collection('companies').doc(companyId);
+
+    const benefitsRef = db.collection('benefits');
+    const benefitsRes = await benefitsRef.where('company','==', companyRef)
+    .where('active','==',true).get();
+
+    if (benefitsRes.empty) {
+        return []
+    }
+
+    return benefitsRes.docs.map(doc => doc.data());
+}
