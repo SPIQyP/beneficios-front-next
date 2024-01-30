@@ -7,7 +7,7 @@ import SwiperBenefits from "./components/swipers/SwiperBenefits";
 export default  async function Home() {
   
   const banners = await getBanners();
-  const companies = await getCompanies();
+  const companiesResponse = await getCompanies();
 
   return (
     <main>
@@ -19,12 +19,12 @@ export default  async function Home() {
           <SwiperBenefits 
             title={"Códigos de descuento"} 
             description="¿Sos socio de Club LA NACION? Descargá tu código y disfrutá beneficios exclusivos en tus marcas favoritas" 
-            content={companies}/>
+            content={companiesResponse.companies}/>
         </div>
         <div className="container mt-6">
           <SwiperBenefits 
             title={"Nuevos Beneficios"} 
-            content={companies}/>
+            content={companiesResponse.companies}/>
         </div>
       </section>
     </main>

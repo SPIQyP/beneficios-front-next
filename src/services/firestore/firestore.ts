@@ -5,7 +5,7 @@ import { firebaseApp } from "../firebase/firebase";
 
 type CompaniesResponse = {
   companies: Company[],
-  startAfter?: QueryDocumentSnapshot<DocumentData>
+  startAfter?: string
 }
 type Company = {
   id: string,
@@ -22,19 +22,19 @@ export const getBanners = async () => {
     return banners;
 }
 
-export const getCompanies = async (): Promise<CompaniesResponse> => {
+export const getCompanies = async (limit: number, statAfter: string): Promise<CompaniesResponse> => {
     const result: CompaniesResponse = {
       companies: [],
     };
     const companies =  (await db.collection('companies').get()).docs;
     result.companies = companies.map(doc => {
-      if(companies.indexOf(doc)) result.startAfter = doc;
+      if(companies.indexOf(doc)) result.startAfter = doc.id;
       return {
           id:doc.id,
           ...doc.data()
       }
     });
-
+    console.log(result);
     return result;
 }
 
@@ -45,7 +45,7 @@ export const getCompany = async (id:string) => {
 }
 
 export const getBenefitsByCompany = async (companyId:string) => {
-    const companyRef = db.collection('companies').doc(companyId);
+    const companyRef = db.doc(`companies/${companyId}`);
 
     const benefitsRef = db.collection('benefits');
     const benefitsRes = await benefitsRef.where('company','==', companyRef)
