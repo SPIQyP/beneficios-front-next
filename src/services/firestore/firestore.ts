@@ -1,7 +1,15 @@
 import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { getFirestore, initializeFirestore } from "firebase-admin/firestore";
+import { DocumentData, DocumentReference, QueryDocumentSnapshot, getFirestore, initializeFirestore } from "firebase-admin/firestore";
 import { firebaseApp } from "../firebase/firebase";
 
+
+type CompaniesResponse = {
+  companies: Company[],
+  startAfter?: QueryDocumentSnapshot<DocumentData>
+}
+type Company = {
+  id: string,
+}
 
 const db = getFirestore(firebaseApp)
 
@@ -14,25 +22,26 @@ export const getBanners = async () => {
     return banners;
 }
 
-export const getCompanies = async () => {
-    const companies = (await db.collection('companies').get()).docs.map(doc => {
-        return {
-            id:doc.id,
-            data: doc.data()
-        }
+export const getCompanies = async (): Promise<CompaniesResponse> => {
+    const result: CompaniesResponse = {
+      companies: [],
+    };
+    const companies =  (await db.collection('companies').get()).docs;
+    result.companies = companies.map(doc => {
+      if(companies.indexOf(doc)) result.startAfter = doc;
+      return {
+          id:doc.id,
+          ...doc.data()
+      }
     });
 
-    if (companies.length === 0 ){
-        return [];
-    }
-
-    return companies;
+    return result;
 }
 
 export const getCompany = async (id:string) => {
-    const companyRef = db.collection('companies');
-    const companyRes = (await companyRef.doc(id).get()).data();
-    return companyRes;
+    const companyRef = db.doc(`companies/${id}`);
+    const companyRes = await companyRef.get();
+    return companyRes.data();
 }
 
 export const getBenefitsByCompany = async (companyId:string) => {
