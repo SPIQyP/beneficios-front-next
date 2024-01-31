@@ -22,7 +22,7 @@ export const getBanners = async () => {
     return banners;
 }
 
-export const getCompanies = async (limit: number, statAfter: string): Promise<CompaniesResponse> => {
+export const getCompanies = async (limit: number, statAfter?: string): Promise<CompaniesResponse> => {
     const result: CompaniesResponse = {
       companies: [],
     };

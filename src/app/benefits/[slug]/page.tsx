@@ -8,8 +8,6 @@ export default async function BenefitPage({params:{slug}}:any) {
     const company = await getCompany(slug);
     const benefits = await getBenefitsByCompany(slug);
 
-    console.log('Estos son los beneficios de la empresa -->>> ',benefits)
-
     if (!company) {
         console.log("no se consiguio la compañia!!! envio a pagina 404")
         return
@@ -38,8 +36,20 @@ export default async function BenefitPage({params:{slug}}:any) {
                     </div>
                 </div>
             </div>
-            <div className="container">
-
+            <div className="grid grid-cols-12 mt-10">
+                {
+                    benefits.map((benefit:any, i:number) => (
+                        <div key={i} className="col-span-8 text-black border p-8 rounded-lg mb-10">
+                            <div className="flex flex-col gap-4">
+                                <h3 className="text-4xl font-bold">{benefit.title}</h3>
+                                <p className="text-xl">{benefit.description}</p>
+                                <p>{`Disponible de : ${benefit.startDate.toDate().toLocaleDateString()} hasta ${benefit.endDate.toDate().toLocaleDateString()}`}</p>
+                                <p>{benefit.termsAndConditions}</p>
+                                <button className="btn w-fit text-white">Iniciar session</button>
+                            </div>
+                        </div>
+                    ))
+                }
             </div>
         </div>
         </>

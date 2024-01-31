@@ -7,7 +7,7 @@ import SwiperBenefits from "./components/swipers/SwiperBenefits";
 export default  async function Home() {
   
   const banners = await getBanners();
-  const companiesResponse = await getCompanies();
+  const companiesResponse = await getCompanies(10);
 
   return (
     <main>
