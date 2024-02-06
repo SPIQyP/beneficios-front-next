@@ -1,5 +1,6 @@
 import Banner from "@/app/components/swipers/Banners";
-import { getBanners, getBenefitsByCompany, getCompany } from "@/services/firestore/firestore";
+import { getBanners } from "@/services/banners/banners";
+import { getBenefitsByCompany, getCompany, getImageByCompany } from "@/services/companies/compaies";
 import Link from "next/link";
 
 
@@ -7,6 +8,7 @@ export default async function BenefitPage({params:{slug}}:any) {
     const banners = await getBanners(); //hay que buscar las imagenes en media
     const company = await getCompany(slug);
     const benefits = await getBenefitsByCompany(slug);
+    const companyImages = await getImageByCompany(slug);
 
     if (!company) {
         console.log("no se consiguio la compañia!!! envio a pagina 404")
@@ -25,7 +27,7 @@ export default async function BenefitPage({params:{slug}}:any) {
             </div>
             <div className="mt-6 grid grid-cols-12 gap-4">
                 <div className="col-span-6">
-                    <Banner content={banners}></Banner>
+                    <Banner content={companyImages} isCompany={true}></Banner>
                 </div>
                 <div className="col-span-6 text-black flex">
                     <div className="p-4 rounded-xl w-2/3 drop-shadow-md">

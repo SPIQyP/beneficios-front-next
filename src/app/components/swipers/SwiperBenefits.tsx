@@ -5,16 +5,33 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import 'swiper/css/navigation';
 import CompanyCard from "../companyCard/CompanyCard";
+import { useRef, useState } from "react";
 
 interface SwiperBenefitsProps {
     title:string;
     description?:string;
     content: any[];
+    linkCategory:string;
 }
-const SwiperBenefits = ({title,content,description}:SwiperBenefitsProps) => {
+const SwiperBenefits = ({title,content,description,linkCategory}:SwiperBenefitsProps) => {
     
-    console.log("Contenido -->>>> ",content)
-    
+    const [swiperContent, setSwiperContent] = useState<any>()
+
+    async function getMoreCompanies(){
+           const resp = await fetch("/api/companies",{
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({limit:1,id: content[content.length -1].id})
+           })
+
+           const responseJson = await resp.json();
+           const newContent = [...content, ...responseJson.data.companies];
+           console.log("New Content  -->>> ",newContent)
+
+    }
+
     return (
         <>
             <div className="text-black grid grid-cols-12 items-center">
@@ -23,7 +40,7 @@ const SwiperBenefits = ({title,content,description}:SwiperBenefitsProps) => {
                     <p className="mt-4">{description}</p>
                 </div>
                 <div className="col-span-12 lg:col-span-4 flex lg:justify-end">
-                    <Link className="text-2xl font-bold" href={'/'}>Mas beneficios</Link>
+                    <Link className="text-2xl font-bold" href={linkCategory}>Mas beneficios</Link>
                 </div>
             </div>
             <div className="flex justify-center mt-6">
@@ -47,7 +64,7 @@ const SwiperBenefits = ({title,content,description}:SwiperBenefitsProps) => {
                         spaceBetween: 8
                     },
                     }}
-                
+                onSlideNextTransitionStart={(swiper) => {getMoreCompanies()}}
                 modules={[Navigation,Pagination]}            
             >
                 {
