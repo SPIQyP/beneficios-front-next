@@ -1,5 +1,7 @@
+import { startAfter } from "firebase/database";
 import { db } from "../firestore/firestore"
-import { FieldPath } from "firebase-admin/firestore";
+import { FieldPath, OrderByDirection } from "firebase-admin/firestore";
+import { or, orderBy } from "firebase/firestore";
 
 type CompaniesResponse = {
     companies: Company[],
@@ -19,18 +21,21 @@ export type Company = {
     website:string;
 }
 
-export const getCompanies = async (limit: number, statAfter?: string): Promise<CompaniesResponse> => {
+export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection}): Promise<CompaniesResponse> => {
     const result: CompaniesResponse = {
       companies: [],
     };
-    let companiesRef = db.collection('companies').orderBy(FieldPath.documentId());
+    let query = db.collection('companies').orderBy(FieldPath.documentId());
     
-    if (statAfter) {
-        console.log('entre al if de startAfter !!!',statAfter)
-        companiesRef.startAfter(statAfter);
+    if(order) {
+        query = query.orderBy(order.field, order.direction);
+
+    }
+    if (startAfterId) {
+        query = query.startAfter(startAfterId);
     }
 
-    const companies =   (await companiesRef.limit(limit).get()).docs;
+    const companies =   (await query.limit(limit).get()).docs;
     
     result.companies = companies.map(doc => {
       if(companies.indexOf(doc)) result.startAfter = doc.id;

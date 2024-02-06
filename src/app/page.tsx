@@ -21,13 +21,13 @@ export default  async function Home() {
             title={"Códigos de descuento"} 
             linkCategory="/companies"
             description="¿Sos socio de Club LA NACION? Descargá tu código y disfrutá beneficios exclusivos en tus marcas favoritas" 
-            content={companiesResponse.companies}/>
+            contents={companiesResponse.companies}/>
         </div>
         <div className="container mt-6">
           <SwiperBenefits 
             linkCategory="/companies"
             title={"Nuevos Beneficios"} 
-            content={companiesResponse.companies}/>
+            contents={companiesResponse.companies}/>
         </div>
       </section>
     </main>

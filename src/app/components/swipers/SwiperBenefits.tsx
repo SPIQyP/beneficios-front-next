@@ -10,25 +10,30 @@ import { useRef, useState } from "react";
 interface SwiperBenefitsProps {
     title:string;
     description?:string;
-    content: any[];
+    contents: any[];
     linkCategory:string;
 }
-const SwiperBenefits = ({title,content,description,linkCategory}:SwiperBenefitsProps) => {
+const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefitsProps) => {
     
-    const [swiperContent, setSwiperContent] = useState<any>()
+    const [swiperContents, setSwiperContents] = useState(contents);
+
+
 
     async function getMoreCompanies(){
+        console.log(contents.findLast(c => c));
            const resp = await fetch("/api/companies",{
             method:"POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({limit:1,id: content[content.length -1].id})
+            body: JSON.stringify({
+                limit:1,
+                id: swiperContents.findLast(c => c).id
+            })
            })
 
            const responseJson = await resp.json();
-           const newContent = [...content, ...responseJson.data.companies];
-           console.log("New Content  -->>> ",newContent)
+           setSwiperContents([...swiperContents, ...responseJson.data.companies]);
 
     }
 
@@ -64,15 +69,15 @@ const SwiperBenefits = ({title,content,description,linkCategory}:SwiperBenefitsP
                         spaceBetween: 8
                     },
                     }}
-                onSlideNextTransitionStart={(swiper) => {getMoreCompanies()}}
+                onReachEnd={(swiper) => {getMoreCompanies()}}
                 modules={[Navigation,Pagination]}            
             >
                 {
-                content.map( (content , i) => (
-                    <SwiperSlide key={i}>
-                        <CompanyCard content={content}/>
-                    </SwiperSlide> 
-                ))
+                    swiperContents.map( (content , i) => (
+                        <SwiperSlide key={i}>
+                            <CompanyCard content={content}/>
+                        </SwiperSlide> 
+                    ))
                 }
             </Swiper>
             </div>
