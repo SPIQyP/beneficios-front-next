@@ -1,7 +1,7 @@
 import { startAfter } from "firebase/database";
 import { db } from "../firestore/firestore"
 import { FieldPath, OrderByDirection } from "firebase-admin/firestore";
-import { or, orderBy } from "firebase/firestore";
+import { doc, or, orderBy } from "firebase/firestore";
 
 type CompaniesResponse = {
     companies: Company[],
@@ -14,11 +14,12 @@ export type Company = {
     companyImage:string;
     description:string;
     email:string;
-    location:any[];
+    locations:any[];
     name:string;
     phone:number;
     socialMedia:any;
     website:string;
+    dateCreated:any;
 }
 
 export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection}): Promise<CompaniesResponse> => {
@@ -35,16 +36,24 @@ export const getCompanies = async (limit: number, startAfterId?: string, order?:
         query = query.startAfter(startAfterId);
     }
 
-    const companies =   (await query.limit(limit).get()).docs;
-    
+    const companies =   (await query.limit(limit).get()).docs;    
     result.companies = companies.map(doc => {
       if(companies.indexOf(doc)) result.startAfter = doc.id;
+      
       return {
           id:doc.id,
           ...doc.data() 
       } as Company
     });
     
+    for (const company of result.companies) {
+        const cat:any = await getCategories(company);
+        const locations:any = await getLocations(company);
+        delete company.dateCreated;
+        company.categories = cat;
+        company.locations = locations;
+    }
+
     return result;
 }
 
@@ -65,7 +74,12 @@ export const getBenefitsByCompany = async (companyId:string) => {
         return []
     }
 
-    return benefitsRes.docs.map(doc => doc.data());
+    return benefitsRes.docs.map(doc => {
+        return {
+            id:doc.id,
+            ...doc.data()
+        }
+    });
 }
 
 export const getImageByCompany = async (companyId:string) => {
@@ -78,4 +92,29 @@ export const getImageByCompany = async (companyId:string) => {
     }
 
     return mediaResp.docs.map(doc => doc.data().image);
+}
+
+const getCategories = async (company:Company) => {
+    let categoriesName:string[] = [];
+    if (company.categories.length === 0) return [] 
+    
+    for (const category of company.categories) {
+        const cat:any = (await db.doc(`categories/${category.id}`).get()).data() 
+        categoriesName.push(cat.name)
+    }
+    
+    return categoriesName
+}
+
+const getLocations = async (company:Company) => {
+    let locations:any[] = [];
+    if (company.locations.length === 0) return [];
+
+    for (const locale of company.locations) {
+        const loc = (await db.doc(`localtions/${locale.id}`).get()).data();
+        locations.push(loc)
+    }
+
+    return locations
+
 }

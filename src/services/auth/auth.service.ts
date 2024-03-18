@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { SessionCookieOptions, getAuth } from "firebase-admin/auth";
+import { use } from "react";
+import { db } from "../firestore/firestore";
 
 export const firebaseApp =
   getApps().find((it) => it.name === "firebase-admin-app") ||
@@ -70,4 +72,9 @@ export async function revokeAllSessions(session: string) {
   const decodedIdToken = await auth.verifySessionCookie(session);
 
   return await auth.revokeRefreshTokens(decodedIdToken.sub);
+}
+
+export async function createUser(user:any){
+  db.collection('users').doc().create(user)
+  return true
 }

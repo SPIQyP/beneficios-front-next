@@ -4,6 +4,8 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import "swiper/swiper-bundle.css";
 import CompanyCard from "../companyCard/CompanyCard";
 import { useRef, useState } from "react";
 
@@ -48,13 +50,14 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
                     <Link className="text-2xl font-bold" href={linkCategory}>Mas beneficios</Link>
                 </div>
             </div>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-6 h-[400px]">
             <Swiper
                 className={`swiperBenefits`}   
                 slidesPerView={1}
                 spaceBetween={8}
-                navigation={true}
-                pagination={true}
+                pagination={{
+                    el:'.swiper-paginations',
+                }}
                 breakpoints={{
                     768: {
                         slidesPerView: 3,
@@ -69,6 +72,8 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
                         spaceBetween: 8
                     },
                     }}
+                navigation={true}
+
                 onReachEnd={(swiper) => {getMoreCompanies()}}
                 modules={[Navigation,Pagination]}            
             >
@@ -79,7 +84,9 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
                         </SwiperSlide> 
                     ))
                 }
+            <div className="swiper-pagination swiper-paginations"></div>
             </Swiper>
+            
             </div>
         </>
     )

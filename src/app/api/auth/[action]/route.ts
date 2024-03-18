@@ -1,26 +1,32 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createSessionCookie, revokeAllSessions } from "@/services/auth/auth.service";
+import { createSessionCookie, createUser, revokeAllSessions } from "@/services/auth/auth.service";
 
 export async function POST(request: NextRequest,
   { params: {action} }: { params: { action: string }}) {
-  if(action !== 'sign-in') {
+  if(action !== 'sign-in' && action !== 'create-user') {
     NextResponse.json({ success: false, data: "Method not allowed" });
   }
-  const reqBody = (await request.json()) as { idToken: string };
-  const idToken = reqBody.idToken;
 
-  const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
+  if (action === 'sign-in') {
+    const reqBody = (await request.json()) as { idToken: string };
+    const idToken = reqBody.idToken;
+    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
+    const sessionCookie = await createSessionCookie(idToken, { expiresIn });
+    cookies().set("__session", sessionCookie, { maxAge: expiresIn, httpOnly: true, secure: true });
+  }
 
-  const sessionCookie = await createSessionCookie(idToken, { expiresIn });
-
-  cookies().set("__session", sessionCookie, { maxAge: expiresIn, httpOnly: true, secure: true });
+  if (action === 'create-user') {
+    const user = await createUser(await request.json());
+  }
+  
 
   return NextResponse.json({ success: true, data: "Signed in successfully." });
 }
 
-export async function GET({ params: {action} }: { params: { action: string }}) {
+export async function GET(request: NextRequest,
+  { params: {action} }: { params: { action: string }}) {
   if(action !== 'sign-out') {
     NextResponse.json({ success: false, data: "Method not allowed" });
   }

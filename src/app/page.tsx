@@ -1,7 +1,8 @@
-import { getCompanies } from "@/services/companies/compaies";
+import { getCompanies } from "@/services/companies/companies";
 import Banner from "./components/swipers/Banners";
 import SwiperBenefits from "./components/swipers/SwiperBenefits";
 import { getBanners } from "@/services/banners/banners";
+import { getCurrentUser } from "@/services/auth/auth.service";
 
 
 

@@ -1,4 +1,4 @@
-import { getCompanies } from "@/services/companies/compaies";
+import { getCompanies } from "@/services/companies/companies";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req:NextRequest,resp:NextResponse) {
