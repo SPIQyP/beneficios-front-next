@@ -20,6 +20,7 @@ export type Company = {
     socialMedia:any;
     website:string;
     dateCreated:any;
+    objectId?:string;
 }
 
 export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection}): Promise<CompaniesResponse> => {

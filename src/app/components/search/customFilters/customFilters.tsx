@@ -1,6 +1,7 @@
 'use client'
 import algoliasearch from "algoliasearch";
-import { Configure, DynamicWidgets, InstantSearch, Menu, RefinementList } from "react-instantsearch";
+import { Configure, InstantSearch, RefinementList } from "react-instantsearch";
+import CustomHits from "../customHits/customHits";
 
 const CustomFilters = () => {
     const APPID:any =  process.env.NEXT_PUBLIC_ALGOLIA_APPID;
@@ -9,33 +10,33 @@ const CustomFilters = () => {
     const searchClient = algoliasearch(APPID,APIKEY)
     return(
         <>
-            <InstantSearch
-                searchClient={searchClient}
-                indexName="pre_spiqyp_companies"
-                routing={true}
-                insights={true}
-                >
+           
                     
                     <div className="container">
                         <Configure ruleContexts={[]}/>
                         <div>
                             <p>Categorias</p>
-                            <DynamicWidgets>
                                 <div className="w-full">
                                     <RefinementList
-                                        attribute="name"
+                                        classNames={{
+                                            searchBox:"mb-6",
+                                            checkbox:"mr-2",
+                                            labelText:"text-sm",
+                                            count: "ml-2 bg-orange-400 text-[8px] text-white p-1 rounded-full",
+                                            showMore:"mt-4"
+                                        }}
+                                        attribute="categories"
                                         searchable={true}
                                         searchablePlaceholder="Buscar categorias"
-                                        showMore={true}>
+                                        showMore={true}
+                                        sortBy={['name:desc']}>
                                     </RefinementList>
                                 </div>
-                                <div>
+                                {/* <div>
                                     <Menu attribute="categories" showMore={true}/>
-                                </div>
-                            </DynamicWidgets>
+                                </div> */}
                         </div>
                     </div>
-            </InstantSearch>
         </>
     )
 }

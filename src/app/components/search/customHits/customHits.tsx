@@ -1,4 +1,4 @@
-import Link from "next/link";
+'use client'
 import { useHits, useInstantSearch } from "react-instantsearch";
 
 const CustomHits = () => {
