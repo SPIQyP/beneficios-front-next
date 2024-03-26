@@ -23,11 +23,20 @@ export type Company = {
     objectId?:string;
 }
 
-export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection}): Promise<CompaniesResponse> => {
+export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection},companiesIds?:string[]): Promise<CompaniesResponse> => {
     const result: CompaniesResponse = {
       companies: [],
     };
-    let query = db.collection('companies').orderBy(FieldPath.documentId());
+    let query;
+    const companiesRef = db.collection('companies');
+
+    query = companiesRef;
+
+    if (companiesIds) {
+        query = query.where(FieldPath.documentId(),'in',companiesIds)
+    }
+
+    query = query.orderBy(FieldPath.documentId());
     
     if(order) {
         query = query.orderBy(order.field, order.direction);
@@ -93,6 +102,30 @@ export const getImageByCompany = async (companyId:string) => {
     }
 
     return mediaResp.docs.map(doc => doc.data().image);
+}
+
+export const getCompaniesCollections = async () => {
+    const collectionsRef = db.collection('companies_collections');
+    const collections = await collectionsRef.where('active','==',true).get();
+    if (collections.empty){
+        return [];
+    }
+
+    const companiesCollections = collections.docs.map(doc =>  {
+        const companiesIds:string[] = [];
+
+        doc.data().contents.map((content:any) => {
+            companiesIds.push(content.id);
+        })
+
+        return {
+            id:doc.id,
+            companiesIds: companiesIds,
+            ...doc.data()
+        }as any
+    })    
+
+    return companiesCollections;
 }
 
 const getCategories = async (company:Company) => {

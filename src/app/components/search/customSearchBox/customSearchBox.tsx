@@ -15,7 +15,7 @@ function CustomSearchBox({dictionary}:SearchBoxProps, props: UseSearchBoxProps )
     }
   
     return (
-      <div className='w-full lg:w-1/2 mb-6 relative'>
+      <div className='w-full mb-6 relative'>
           <input
             className='text-black w-full px-4 py-2 rounded border border-black'
             autoComplete="off"

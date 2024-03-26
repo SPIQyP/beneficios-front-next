@@ -75,7 +75,7 @@ const BenefitCard = ({id,title,description,startDate,endDate,termsAndConditions,
                     <div className={`${modalError ? 'hidden':'block'} flex flex-col gap-4`}>
                         <h3 className="text-2xl font-bold">Codigo de cupon {ticket.code}</h3>
                         <p className="text-md">{ticket.benefitTitle}</p>
-                        <p className="text-md">joser2014@gmail.com</p>
+                        <p className="text-md">{emailUser}</p>
                         <p className="text-md">valido desde {ticket.startDate} hasta {ticket.endDate}</p>
                         <p className="text-md">terminos y condiciones</p>
                     </div>

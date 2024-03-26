@@ -22,7 +22,6 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
 
 
     async function getMoreCompanies(){
-        console.log(contents.findLast(c => c));
            const resp = await fetch("/api/companies",{
             method:"POST",
             headers: {
@@ -42,21 +41,30 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
     return (
         <>
             <div className="text-black grid grid-cols-12 items-center">
-                <div className="col-span-12 lg:col-span-8">
-                    <h2 className="text-4xl font-bold ">{title}</h2>
+                <div className="col-span-12 flex items-center">
+                    <h2 className="text-2xl lg:text-4xl font-bold ">{title}</h2>
+                    <Link className="text-sm lg:text-lg text-primary font-bold ml-auto" href={linkCategory}>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm lg:text-base">Mas beneficios</p>
+                            <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.5774 8.57741C13.252 8.90285 13.252 9.43049 13.5774 9.75592C13.9028 10.0814 14.4305 10.0814 14.7559 9.75592L18.9226 5.58926C19.248 5.26382 19.248 4.73618 18.9226 4.41075L14.7559 0.244078C14.4305 -0.0813593 13.9028 -0.0813593 13.5774 0.244078C13.252 0.569515 13.252 1.09715 13.5774 1.42259L16.3215 4.16667H1.66666C1.20642 4.16667 0.833328 4.53976 0.833328 5C0.833328 5.46024 1.20642 5.83333 1.66666 5.83333H16.3215L13.5774 8.57741Z" fill="#155e75"/>
+                            </svg>
+                        </div>
+                    </Link>
+                </div>
+                <div className="col-span-12">
                     <p className="mt-4">{description}</p>
                 </div>
-                <div className="col-span-12 lg:col-span-4 flex lg:justify-end">
-                    <Link className="text-2xl font-bold" href={linkCategory}>Mas beneficios</Link>
-                </div>
             </div>
-            <div className="flex justify-center mt-6 h-[400px]">
+            <div className="flex justify-center mt-6 relative">
             <Swiper
                 className={`swiperBenefits`}   
                 slidesPerView={1}
                 spaceBetween={8}
                 pagination={{
                     el:'.swiper-paginations',
+                    clickable:true,
+                    type:'bullets'
                 }}
                 breakpoints={{
                     768: {
@@ -84,9 +92,9 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
                         </SwiperSlide> 
                     ))
                 }
-            <div className="swiper-pagination swiper-paginations"></div>
-            </Swiper>
             
+            </Swiper>
+            <div className="swiper-pagination swiper-paginations absolute"></div>
             </div>
         </>
     )

@@ -16,7 +16,7 @@ export default async function SignInPage() {
     <main className="container">
       
       <div className="flex justify-center">
-        <div className="w-1/2">
+        <div className="w-full lg:w-1/2">
           <SignIn></SignIn>
         </div>
       </div>

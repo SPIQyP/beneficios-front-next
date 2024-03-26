@@ -27,11 +27,44 @@ body {
   }
 
   .container{
-    @apply px-10 max-w-none;
+    @apply w-full max-w-screen-xl mx-auto px-4 2xl:px-0 relative;
   }
 }
 
 .btn{
   @apply px-4 py-2 bg-cyan-700 rounded-lg;
+}
+
+.swiperBenefits{
+  .swiper-wrapper{
+    width: 100vw;
+  }
+}
+
+.swiper-paginations{
+  bottom: -35px !important;
+  
+  .swiper-pagination-bullet {
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    margin-right: 8px;
+    opacity: 1;
+    background: lightgrey;
+    @media screen and (max-width:1023px) {
+      width: 8px;
+      height: 8px;
+    }
+  }
+
+  .swiper-pagination-bullet-active {
+    color: #fff;
+    background: #155e75;
+  }
+
+  @media screen and (max-width:1023px) {
+    bottom: -40px !important;
+    width: 100%;
+  }
 }
 

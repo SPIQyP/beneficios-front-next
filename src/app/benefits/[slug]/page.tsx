@@ -36,7 +36,7 @@ export default async function BenefitPage({params:{slug}}:any) {
                     <Banner content={companyImages} isCompany={true}></Banner>
                 </div>
                 <div className="col-span-12 lg:col-span-6 text-black flex">
-                    <div className="p-4 rounded-xl w-2/3 drop-shadow-md">
+                    <div className="p-4 rounded-xl w-full lg:w-2/3 drop-shadow-md">
                         <p>Un lugar para compartir entre amigos, relajarse en la arena y realizar actividades. Podes venir a divertirte con amigos y familia, y pasar un dia de playa distinto!</p>
                         <p className="mt-4">{company.phone}</p>
                         <p>{company.email}</p>

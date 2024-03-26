@@ -4,9 +4,10 @@ import Link from "next/link";
 const Footer = () => {
     return (
         <>
-        <div className="container mt-10 bg-cyan-800 py-20">
+        <div className="mt-10 bg-cyan-800 py-20">
+            <div className="container">
             <div className="grid grid-cols-12">
-                <div className="col-span-4">
+                <div className="col-span-4 flex flex-col items-center justify-center">
                     <h2 className="uppercase text-2xl font-bold text-white">Title</h2>
                     <div className="flex flex-col text-white">
                         <Link href={""}>LINK 1</Link>
@@ -14,7 +15,7 @@ const Footer = () => {
                         <Link href={""}>LINK 1</Link>
                     </div>
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-4 flex flex-col items-center justify-center">
                     <h2 className="uppercase text-2xl font-bold text-white">Title</h2>
                     <div className="flex flex-col text-white">
                         <Link href={""}>LINK 1</Link>
@@ -22,7 +23,7 @@ const Footer = () => {
                         <Link href={""}>LINK 1</Link>
                     </div>
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-4 flex flex-col items-center justify-center">
                     <h2 className="uppercase text-2xl font-bold text-white">Title</h2>
                     <div className="flex flex-col text-white">
                         <Link href={""}>LINK 1</Link>
@@ -35,6 +36,7 @@ const Footer = () => {
             <div className="flex gap-4 items-center justify-center w-full ">
                 {/* <Image src={"/img/logos/logo.png"} alt={""} width={100} height={100} /> */}
                 <p>© 2024 LineaD. Todos los derechos reservados</p>
+            </div>
             </div>
         </div>
         

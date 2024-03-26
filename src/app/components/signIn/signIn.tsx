@@ -155,9 +155,9 @@ const SignIn = () => {
                 <div className="col-span-4"><Divider></Divider></div>
             </div>
             <div className="flex flex-col items-center mt-4 gap-4">
-                <Button className="w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/logo-google.svg" alt="google" width={24} height={24} />} onClick={x => {handleSignIn(1)}}>Iniciar sesion con Google</Button>
-                <Button className="w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/facebook-logo.svg" alt="google" width={24} height={24} />}>Iniciar sesion con Facebook</Button>
-                <Button className="w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/apple-logo.svg" alt="google" width={24} height={24} />}>Iniciar sesion con Apple</Button>
+                <Button className="w-full lg:w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/logo-google.svg" alt="google" width={24} height={24} />} onClick={x => {handleSignIn(1)}}>Iniciar sesion con Google</Button>
+                <Button className="w-full lg:w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/facebook-logo.svg" alt="google" width={24} height={24} />}>Iniciar sesion con Facebook</Button>
+                <Button className="w-full lg:w-1/2 bg-transparent border border-black" startContent={<Image src="/img/icons/apple-logo.svg" alt="google" width={24} height={24} />}>Iniciar sesion con Apple</Button>
             </div>
 
 
