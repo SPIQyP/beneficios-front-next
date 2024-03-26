@@ -29,7 +29,7 @@ export default async function BenefitPage({params:{slug}}:any) {
             </div>
             <div className="flex flex-col lg:flex-row text-black mt-6">
                 <h1 className="text-4xl">{company.name}</h1>
-                <button className="w-fit lg:ml-auto mt-2 lg:mt-0">Compartir</button>
+                <button className="w-fit lg:ml-auto mt-2 lg:mt-0 text-primary">Compartir</button>
             </div>
             <div className="mt-6 grid grid-cols-12 gap-4">
                 <div className="col-span-12 lg:col-span-6">

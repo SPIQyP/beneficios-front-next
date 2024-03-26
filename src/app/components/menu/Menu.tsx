@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Search from "../search/search";
-import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Listbox, ListboxItem, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
+import { Avatar, Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Listbox, ListboxItem, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@nextui-org/react";
 
 interface MenuProps {
     isSession:boolean;
@@ -34,13 +34,12 @@ const Menu = ({isSession, userAuth}:MenuProps) => {
 
 
     return (
-        <Navbar className="text-black">
+        <Navbar className="text-black" maxWidth="xl">
             <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="sm:hidden"
             />
             <NavbarBrand>
-                {/* <AcmeLogo /> */}
                 <Link href="/">
                     <Image className="" src={"/img/logos/logo.png"} alt={"logo"} width={130} height={30}/>
                 </Link>
@@ -93,6 +92,7 @@ const Menu = ({isSession, userAuth}:MenuProps) => {
                         >
                         {item}
                         </Link>
+                    <Divider className="my-4" />
                     </NavbarMenuItem>
                     ))}
                         <Listbox

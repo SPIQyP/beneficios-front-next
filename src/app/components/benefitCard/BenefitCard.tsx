@@ -50,10 +50,10 @@ const BenefitCard = ({id,title,description,startDate,endDate,termsAndConditions,
     
     return(
         <>
-        <div className="col-span-12 lg:col-span-8 text-black border p-8 rounded-lg mb-10">
-            <div className="flex flex-col gap-4">
-                <h3 className="text-4xl font-bold">{title}</h3>
-                <p className="text-xl">{description}</p>
+        <div className="col-span-12 lg:col-span-8 text-black border p-4 lg:p-8 rounded-lg mb-10 bg-white shadow-lg">
+            <div className="flex flex-col gap-2 lg:gap-4">
+                <h3 className="text-2xl lg:text-4xl font-bold">{title}</h3>
+                <p className="text-lg lg:text-xl">{description}</p>
                 <p>{`Disponible de : ${startDate} hasta ${endDate}`}</p>
                 <p>{termsAndConditions}</p>
                 <Link href={"/sign-in"} className={`btn w-fit text-white ${isAuthenticated ? 'hidden':'block'}`}>Iniciar session</Link>

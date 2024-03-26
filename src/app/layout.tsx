@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-[#f6f6f3]`}>
         <Menu isSession={isAuthenticated} userAuth={JSON.stringify(userAuth)}/>
         {children}
         <Footer/>
