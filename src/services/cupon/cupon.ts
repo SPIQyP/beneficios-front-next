@@ -84,7 +84,7 @@ export const getCuponByBenefit = async (benefitId:string,userUid:string,userEmai
     await db.collection('tickets').doc().create(ticket)
     
     //envio el correo con el cupon
-    const emailResponse = await sendEmail("jose.romero@lineadgroup.com",[userEmail],`<p>Aqui va el html del cupon</p>` ,`Cupon ${benefit.title}`)
+    const emailResponse = await sendEmail("jose.romero@lineadgroup.com",[userEmail],generateCuponHtml(userEmail,benefit.title,code,startDate.toString(),endDate.toString()) ,`Cupon ${benefit.title}`)
 
     if (!emailResponse){
         return {success:false,data:{msj:"no se pudo enviar el email"}}
@@ -108,5 +108,17 @@ export const sendEmail = async (from:string,to:string[],html:string, subject:str
         console.log("ERROR AL ENVIAR!! -->>> ",e)
         return false
     }
-    
+}
+
+const generateCuponHtml = (userEmail:string,title:string,code:string,starDate:string,endDate:string) => {
+    return `
+        <div>
+            <p>Hola ${userEmail}, has obtenido un cupon para ${title}</p>
+            <p>Información de tú cupon</p>
+            <ul>
+                <li>Código: ${code}</li>
+                <li>Este cupon es valido del ${starDate} hasta ${endDate}</li>
+            </ul>
+        </div>
+    `
 }

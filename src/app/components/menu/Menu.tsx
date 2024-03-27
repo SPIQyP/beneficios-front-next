@@ -88,7 +88,6 @@ const Menu = ({isSession, userAuth}:MenuProps) => {
                         }
                         className="w-full"
                         href="#"
-                        size="lg"
                         >
                         {item}
                         </Link>
