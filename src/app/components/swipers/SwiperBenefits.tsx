@@ -22,6 +22,8 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
 
 
     async function getMoreCompanies(){
+            const lastItem = swiperContents[swiperContents.length - 1];
+            if(lastItem === undefined || !lastItem.id) return;
            const resp = await fetch("/api/companies",{
             method:"POST",
             headers: {
@@ -29,12 +31,12 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
             },
             body: JSON.stringify({
                 limit:1,
-                id: swiperContents.findLast(c => c).id
+                lastItem,
             })
            })
 
            const responseJson = await resp.json();
-           setSwiperContents([...swiperContents, ...responseJson.data.companies]);
+           if(responseJson.success) setSwiperContents([...swiperContents, ...responseJson.data.companies]);
 
     }
 
@@ -58,7 +60,7 @@ const SwiperBenefits = ({title,contents,description,linkCategory}:SwiperBenefits
             </div>
             <div className="flex justify-center mt-6 relative">
             <Swiper
-                className={`swiperBenefits`}   
+                className={`swiperBenefits px-4 -mx-4`}   
                 slidesPerView={1}
                 spaceBetween={8}
                 pagination={{

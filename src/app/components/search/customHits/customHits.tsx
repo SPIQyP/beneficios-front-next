@@ -1,26 +1,30 @@
 'use client'
-import { useHits, useInstantSearch } from "react-instantsearch";
+import { Link } from "@nextui-org/react";
+import React from 'react';
+import {
+    Highlight,
+  useHits,
+  UseHitsProps,
+} from 'react-instantsearch';
 
-const CustomHits = () => {
-    const {hits} = useHits({})
-    const { results } = useInstantSearch();
-    
-    return(
-        <>
-            <div className={`${hits.length === 0 || results.query === '' ? 'hidden': 'block'} bg-neutral-200 rounded-lg text-black p-3 w-1/2 absolute top-11`}>
-                {
-                    hits.map((hit:any,i:number) => (
-                        <a key={i} href={`/benefits/${hit.objectID}`} >
-                            <div>
-                                <label className="cursor-pointer">{hit.name}</label>
-                            </div>
-                        </a>
-                        
-                    ))
-                }
-            </div>
-        </>
-    )
+export default function CustomHits(props: UseHitsProps) {
+  const { items, sendEvent } = useHits(props);
+
+  return (
+    <>
+    {items && items.length>0 && <ol className={`w-full p-6 bg-gray-200 flex flex-col gap-4`}>
+      {items.map((hit) => (
+        <Link
+          key={hit.objectID}
+          onClick={() => sendEvent('click', hit, 'Hit Clicked')}
+          onAuxClick={() => sendEvent('click', hit, 'Hit Clicked')}
+          href={`/benefits/${hit.objectID}`}
+        >
+            <Highlight hit={hit} attribute="name" className="Hit-label" />
+
+        </Link>
+      ))}
+    </ol>}
+    </>
+  );
 }
-
-export default CustomHits;

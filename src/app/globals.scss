@@ -32,13 +32,18 @@ body {
 }
 
 .btn{
-  @apply px-4 py-2 bg-cyan-700 rounded-lg;
+  @apply px-4 py-2 bg-primary rounded-lg;
 }
 
 .swiperBenefits{
-  .swiper-wrapper{
-    width: 100vw;
-  }
+  
+  // &.swiper {
+  //   margin-left: -2rem;
+  //   margin-right: -2rem;
+  //   padding-left: 2rem;
+  //   padding-right: 2rem;
+
+  // }
 }
 
 .swiper-paginations{
@@ -59,7 +64,7 @@ body {
 
   .swiper-pagination-bullet-active {
     color: #fff;
-    background: #155e75;
+    background: #31386f;
   }
 
   @media screen and (max-width:1023px) {
@@ -68,3 +73,12 @@ body {
   }
 }
 
+
+/* clears the ‘X’ from Internet Explorer */
+input[type=search]::-ms-clear { display: none; width : 0; height: 0; }
+input[type=search]::-ms-reveal { display: none; width : 0; height: 0; }
+/* clears the ‘X’ from Chrome */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }

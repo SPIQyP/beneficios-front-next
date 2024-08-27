@@ -22,7 +22,14 @@ const config: Config = {
       light: {
         colors: {
           primary: {
-            DEFAULT: '#155e75'
+            DEFAULT: '#0d2f6e'
+          },
+        }
+      },
+      dark: {
+        colors: {
+          primary: {
+            DEFAULT: '#0d2f6e'
           },
         }
       }

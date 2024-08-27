@@ -9,8 +9,7 @@ export default  async function Home() {
   
   const banners = await getBanners();
   const collections = await getCompaniesCollections()
-  const companiesResponse = await getCompanies(5);
-
+  const companiesResponse = await getCompanies(5, {field:'dateCreated', direction:'desc'});
   return (
     <main>
       <section>
@@ -32,7 +31,7 @@ export default  async function Home() {
           <SwiperBenefits 
             title={"Códigos de descuento"} 
             linkCategory="/companies"
-            description="¿Sos socio de Club LA NACION? Descargá tu código y disfrutá beneficios exclusivos en tus marcas favoritas" 
+            description="¿Estás afiliado a SPIQyP? Descargá tu código y disfrutá beneficios exclusivos en tus marcas favoritas" 
             contents={companiesResponse.companies}/>
         </div>
         <div className="container mt-10">

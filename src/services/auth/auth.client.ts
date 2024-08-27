@@ -1,9 +1,11 @@
 import { GoogleAuthProvider, UserCredential, createUserWithEmailAndPassword, getAuth, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
-import { APIResponse } from "@/types";
 import { getApps, initializeApp } from "firebase/app";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { use } from "react";
+import { getToken } from "firebase/app-check";
+import { getAppCheck } from "../app-check/app-check.service";
+import { NextApiResponse } from "next";
 
 let firebaseConfig;
 
@@ -28,7 +30,7 @@ export async function signInWithGoogle() {
 
   try {
     const userCreds = await signInWithPopup(auth, provider);
-    await createUser(userCreds)
+    // await createUser(userCreds)
     const idToken = await userCreds.user.getIdToken();
     return createSession(idToken);
   } catch (error) {
@@ -38,91 +40,123 @@ export async function signInWithGoogle() {
 }
 
 export async function signOut() {
-  try {
-    await auth.signOut();
-    const response = await fetch("/api/auth/sign-out", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const resBody = (await response.json()) as unknown as APIResponse<string>;
-    if (response.ok && resBody.success) {
-      return true;
-    } else return false;
-  } catch (error) {
-    console.error("Error signing out with Google", error);
-    return false;
+  await auth.signOut();
+  const headers: Record<string, string> = {};
+
+  // This is optional. Use it if your app supports App Check – https://firebase.google.com/docs/app-check
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    const appCheckTokenResponse = await getToken(getAppCheck(), false);
+
+    headers['X-Firebase-AppCheck'] = appCheckTokenResponse.token;
   }
+
+  await fetch('/api/logout', {
+    method: 'GET',
+    headers
+  })
 }
 
-export async function signUpWithEmail(email:string, password:string) {
-  try{
-    const userCreds = await createUserWithEmailAndPassword(auth, email, password)
-    await createUser(userCreds)
-    if (!userCreds.user.emailVerified){
-      sendEmailVerification(userCreds.user);
-      return true;
-    }
-
-    return false;
-
-  }catch(error) {
-    throw error;
+export async function signUpWithEmail(data: any) {
+  const userResponse = await fetch("/api/auth/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const userResponseBody = await userResponse.json();
+  if (userResponse.ok) {
+  
+    return true;
+  } else {
+    throw userResponseBody.error;
   }
   
 }
 
 export async function signInWithEmail(email:string,password:string){
-  try {
-    const userCreds = await signInWithEmailAndPassword(auth, email, password)
-
-    if (!userCreds.user.emailVerified){
-      return false
-    }else{
-      const idToken = await userCreds.user.getIdToken();
-      return await createSession(idToken);
-    }
-
     
-  }catch(error){
-    throw error;
+const userCreds = await signInWithEmailAndPassword(auth, email, password)
+
+  if (!userCreds.user.emailVerified){
+    throw "auth/email-not-verified";
+  }else{
+    const idToken = await userCreds.user.getIdToken();
+    return await createSession(idToken);
   }
   
 }
 
 async function createSession(idToken:string){
-  const response = await fetch("/api/auth/sign-in", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ idToken }),
-  });
-  const resBody = (await response.json()) as unknown as APIResponse<string>;
-  if (response.ok && resBody.success) {
-    return true;
-  } else return false;
-}
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${idToken}`
+  };
 
-async function createUser(user:UserCredential){
-  const data = {
-    name:user.user.displayName,
-    email:user.user.email,
-    photoUrl:user.user.photoURL,
-    provider: user.user.providerId,
-    uid:user.user.uid
+  // This is optional. Use it if your app supports App Check – https://firebase.google.com/docs/app-check
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    const appCheckTokenResponse = await getToken(getAppCheck(), false);
+
+    headers['X-Firebase-AppCheck'] = appCheckTokenResponse.token;
   }
 
-  const response = await fetch("/api/auth/create-user", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ data }),
+  await fetch('/api/login', {
+    method: 'GET',
+    headers
   });
-  const resBody = (await response.json()) as unknown as APIResponse<string>;
-  if (response.ok && resBody.success) {
-    return true;
-  } else return false;
+}
 
+export async function login(token: string) {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`
+  };
+
+  // This is optional. Use it if your app supports App Check – https://firebase.google.com/docs/app-check
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    const appCheckTokenResponse = await getToken(getAppCheck(), false);
+
+    headers['X-Firebase-AppCheck'] = appCheckTokenResponse.token;
+  }
+
+  await fetch('/api/login', {
+    method: 'GET',
+    headers
+  });
+}
+
+export async function loginWithCredential(credential: UserCredential) {
+  const idToken = await credential.user.getIdToken();
+
+  await login(idToken);
+}
+
+export async function logout() {
+  const headers: Record<string, string> = {};
+
+  // This is optional. Use it if your app supports App Check – https://firebase.google.com/docs/app-check
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    const appCheckTokenResponse = await getToken(getAppCheck(), false);
+
+    headers['X-Firebase-AppCheck'] = appCheckTokenResponse.token;
+  }
+
+  await fetch('/api/logout', {
+    method: 'GET',
+    headers
+  });
+}
+
+export async function refreshToken() {
+  const headers: Record<string, string> = {};
+
+  // This is optional. Use it if your app supports App Check – https://firebase.google.com/docs/app-check
+  if (process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY) {
+    const appCheckTokenResponse = await getToken(getAppCheck(), false);
+
+    headers['X-Firebase-AppCheck'] = appCheckTokenResponse.token;
+  }
+
+  await fetch('/api/refresh-token', {
+    method: 'GET',
+    headers
+  });
 }

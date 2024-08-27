@@ -3,49 +3,41 @@ import { signInWithEmail, signInWithGoogle, signUpWithEmail } from "@/services/a
 import { useRedirectAfterLogin } from "@/shared/hooks/useRedirectAfterLogin";
 import { Button, Divider, Image, Input, Link, Spinner } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
-const SignIn = () => {
+const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [isSignUp, setIsSignUp] = useState(false);
+    const [showPasswordRepeat, setShowPasswordRepeat] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [isLogginIn, setIsLoggingIn] = useState(false);
 
-    const formRef = useRef<any>(null);
-    const router = useRouter();
+    const [password, setPassword] = useState('');
+    const [repeatPassword, setRepeatPassword] = useState('');
 
+    const formRef = useRef<any>(null);
     const redirectAfterLogin = useRedirectAfterLogin();
 
-    const handleSignIn = async (authMethod: number) => {
-        let isOk = false;
-        switch (authMethod) {
-            case 1: {
-                await signInWithGoogle();
-                redirectAfterLogin();
-            }
-            default: {
-
-            }
-        }
-
-    };
-
-    const handleForm = async (e: any) => {
+    const register = async (e: any) => {
         try {
             e.preventDefault();
             setLoading(true);
             setMessage('');
-            
             const formData = new FormData(e.target);
             const formEntries: any = Object.fromEntries(formData);
 
+            await signUpWithEmail(formEntries);
+
+            setMessage('Cuenta creada con éxito, iniciando sesión...');
+            
             await signInWithEmail(formEntries.email, formEntries.password);
 
             redirectAfterLogin();
             
+            e.target.reset();
+            
         } catch (error: any) {
-            console.log(error.code)
+            console.log(error)
             setMessage(error);
         } finally {
             setLoading(false)
@@ -57,15 +49,16 @@ const SignIn = () => {
     return (
         <>
             <div>
-                <p className={`text-xl font-bold text-primary text-center w-full`}>Iniciar sesion</p>
-                <form ref={formRef} onSubmit={handleForm}>
+                <p className={`text-xl font-bold text-primary text-center w-full`}>Crear Cuenta</p>
+                <form ref={formRef} onSubmit={register}>
                     <div className="flex flex-col gap-4 my-4 text-black">
-                        <Input className="hidden" type="text" name="operation" value={`${isSignUp ? 'signUp' : 'login'}`} />
-                        <Input type="email" label="Email" name="email" required variant="bordered" />
+                        <Input isRequired type="text" label="Numero de documento" name="document" required variant="bordered" />
+                        <Input isRequired type="text" label="Numero de afiliado" name="affiliateNumber" required variant="bordered" />
+                        <Input type="email" label="Email" name="email" isRequired variant="bordered" />
                         <Input
                             name="password"
                             className="flex items-center"
-                            label="Password"
+                            label="Contraseña"
                             variant="bordered"
                             required
                             endContent={
@@ -77,25 +70,39 @@ const SignIn = () => {
                                     )}
                                 </button>
                             }
+                            onChange={(e) => setPassword(e.target.value)}
                             type={showPassword ? "text" : "password"}
                         />
 
-                        <Button className={`btn text-white ${isSignUp ? 'hidden' : 'block'}`} type="submit">
-                            <div className="flex items-center justify-center gap-3">
-                                <Spinner className={`${loading ? 'block' : 'hidden'}`} size="sm" color="white" />
-                                <span>Iniciar sesion</span>
-                            </div>
+                        <Input
+                            className={`flex items-center`}
+                            name="repeatPassword"
+                            label="Repita Contraseña"
+                            variant="bordered"
+                            required
+                            endContent={
+                                <button className="focus:outline-none" type="button" onClick={()=> setShowPasswordRepeat(!showPasswordRepeat)}>
+                                    {showPasswordRepeat ? (
+                                        <Image src="/img/icons/eye-slash.svg" alt="eye-view" width={24} height={24} />
+                                    ) : (
+                                        <Image src="/img/icons/eye-view.svg" alt="eye-slash" width={24} height={24} />
+                                    )}
+                                </button>
+                            }
+                            onChange={(e) => setRepeatPassword(e.target.value)}
+                            isInvalid={!!repeatPassword && password !== repeatPassword}
+                            type={showPasswordRepeat ? "text" : "password"}
+                            color={!repeatPassword ? "default" : password !== repeatPassword ? "danger" : "success"}
+                        />
 
-                        </Button>
-                        <Button className={`btn text-white ${isSignUp ? 'block' : 'hidden'}`} type="submit">
+                        <Button className={`btn text-white`} type="submit">
                             <div className="flex items-center justify-center gap-3">
                                 <Spinner className={`${loading ? 'block' : 'hidden'}`} size="sm" color="white" />
                                 <span>Crear cuenta</span>
                             </div>
                         </Button>
                         {message && <p className={`text-black text-center`}>{message}</p>}
-                        <Button >¿Olvidaste tu contraseña?</Button>
-                        <Link type="reset" href="/register">¿No tenés cuenta? Registrate.</Link>
+                        <Link type="reset" href="/login">Ya tengo cuenta</Link>
                     </div>
                 </form>
                 {/* <div className="grid grid-cols-12 justify-center items-center">
@@ -115,4 +122,4 @@ const SignIn = () => {
     )
 }
 
-export default SignIn;
+export default Register;

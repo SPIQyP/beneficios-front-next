@@ -1,43 +1,68 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createSessionCookie, createUser, revokeAllSessions } from "@/services/auth/auth.service";
+import { createSessionCookie, createUserWithValidation, revokeAllSessions } from "@/services/auth/auth.service";
+import { ApiResponse } from "@/shared/types.server";
+import { UserRecord } from "firebase-admin/auth";
+
+export type CreateUserRequest = {
+  name: string,
+  email: string,
+  password: string,
+  role: string,
+}
+export interface CreateUserResponse extends ApiResponse {
+  data?: UserRecord,
+}
+export interface CreateUserRequestAdditionalValidation extends CreateUserRequest {
+  document: string,
+  affiliateNumber: string,
+}
 
 export async function POST(request: NextRequest,
-  { params: {action} }: { params: { action: string }}) {
-  if(action !== 'sign-in' && action !== 'create-user') {
-    NextResponse.json({ success: false, data: "Method not allowed" });
-  }
-
-  if (action === 'sign-in') {
-    const reqBody = (await request.json()) as { idToken: string };
-    const idToken = reqBody.idToken;
-    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-    const sessionCookie = await createSessionCookie(idToken, { expiresIn });
-    cookies().set("__session", sessionCookie, { maxAge: expiresIn, httpOnly: true, secure: true });
-  }
-
-  if (action === 'create-user') {
-    const user = await createUser(await request.json());
-  }
+  { params: {action} }: { params: { action: string }}): Promise<NextResponse<CreateUserResponse>> {
+  try {
+    
+    if (action === 'sign-in') {
+      
+    }
   
+    else if (action === 'create') {
+      const createUserRequest = (await request.json()) as CreateUserRequestAdditionalValidation;
+      const user = await Create(createUserRequest);
+      return NextResponse.json({ success: true, data: user });
+    } else {
+      
+    }
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.cause.code }, {status: 400});
+  }
+  return NextResponse.json({ success: false, error: "auth/unhandled-error" }, {status: 400});
 
-  return NextResponse.json({ success: true, data: "Signed in successfully." });
 }
 
 export async function GET(request: NextRequest,
   { params: {action} }: { params: { action: string }}) {
-  if(action !== 'sign-out') {
-    NextResponse.json({ success: false, data: "Method not allowed" });
+  
+}
+
+const Create = async (createUserRequest: CreateUserRequestAdditionalValidation) => {
+  
+  const user = await createUserWithValidation(createUserRequest);
+  if (!user) {
+    throw new Error("Error creating user.", {cause: {code: "auth/user-creation-error"}});
   }
-  const sessionCookie = cookies().get("__session")?.value;
+  return user;
+}
 
-  if (!sessionCookie)
-    return NextResponse.json({ success: false, error: "Session not found." }, { status: 400 });
+const Read = () => {
 
-  cookies().delete("__session");
+}
 
-  await revokeAllSessions(sessionCookie);
+const Update = () => {
 
-  return NextResponse.json({ success: true, data: "Signed out successfully." });
+}
+
+const Delete = () => {
+
 }

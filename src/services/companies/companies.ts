@@ -2,6 +2,8 @@ import { startAfter } from "firebase/database";
 import { db } from "../firestore/firestore"
 import { FieldPath, OrderByDirection } from "firebase-admin/firestore";
 import { doc, or, orderBy } from "firebase/firestore";
+import { isDate } from "util/types";
+import { serializeFirestoreDocument } from "../util";
 
 type CompaniesResponse = {
     companies: Company[],
@@ -10,7 +12,7 @@ type CompaniesResponse = {
 export type Company = {
     id: string;
     address:string;
-    categories:any[];
+    categories:string[];
     companyImage:string;
     description:string;
     email:string;
@@ -21,9 +23,10 @@ export type Company = {
     website:string;
     dateCreated:any;
     objectId?:string;
+    companyLogo?:string;
 }
 
-export const getCompanies = async (limit: number, startAfterId?: string, order?: {field: string, direction: OrderByDirection},companiesIds?:string[]): Promise<CompaniesResponse> => {
+export const getCompanies = async (limit: number, order?: {field: string, direction: OrderByDirection, lastItem?: any},companiesIds?:string[]): Promise<CompaniesResponse> => {
     const result: CompaniesResponse = {
       companies: [],
     };
@@ -33,44 +36,42 @@ export const getCompanies = async (limit: number, startAfterId?: string, order?:
     query = companiesRef;
 
     if (companiesIds) {
-        query = query.where(FieldPath.documentId(),'in',companiesIds)
+        query = query.where("id",'in',companiesIds)
     }
-
-    query = query.orderBy(FieldPath.documentId());
     
     if(order) {
         query = query.orderBy(order.field, order.direction);
-
+        if(order.lastItem) {
+            let startAfterCursor = order.lastItem[order.field];
+            const startAfterDate = new Date(startAfterCursor);
+            if(typeof startAfterCursor === 'string' && !isNaN(startAfterDate.getDate())) startAfterCursor = startAfterDate;
+            query = query.startAfter(startAfterCursor);
+        }
     }
-    if (startAfterId) {
-        query = query.startAfter(startAfterId);
-    }
 
-    const companies =   (await query.limit(limit).get()).docs;    
-    result.companies = companies.map(doc => {
-      if(companies.indexOf(doc)) result.startAfter = doc.id;
-      
+    const companies =  (await query.limit(limit).get()).docs;    
+    result.companies = companies.map(doc => {      
+        
       return {
           id:doc.id,
-          ...doc.data() 
+          ...serializeFirestoreDocument(doc.data())
       } as Company
     });
     
     for (const company of result.companies) {
         const cat:any = await getCategories(company);
         const locations:any = await getLocations(company);
-        delete company.dateCreated;
-        company.categories = cat;
-        company.locations = locations;
+        company.categories = (cat);
+        company.locations = (locations);
     }
 
     return result;
 }
 
-export const getCompany = async (id:string) => {
+export const getCompany = async (id:string): Promise<Company> => {
     const companyRef = db.doc(`companies/${id}`);
     const companyRes = await companyRef.get();
-    return companyRes.data();
+    return serializeFirestoreDocument(companyRes.data()) as Company;
 }
 
 export const getBenefitsByCompany = async (companyId:string) => {
@@ -87,9 +88,10 @@ export const getBenefitsByCompany = async (companyId:string) => {
     return benefitsRes.docs.map(doc => {
         return {
             id:doc.id,
-            ...doc.data()
+            ...serializeFirestoreDocument(doc.data())
         }
     });
+    
 }
 
 export const getImageByCompany = async (companyId:string) => {
@@ -133,7 +135,7 @@ const getCategories = async (company:Company) => {
     if (company.categories.length === 0) return [] 
     
     for (const category of company.categories) {
-        const cat:any = (await db.doc(`categories/${category.id}`).get()).data() 
+        const cat:any = (await db.doc(`${category}`).get()).data() 
         categoriesName.push(cat.name)
     }
     
@@ -145,7 +147,7 @@ const getLocations = async (company:Company) => {
     if (company.locations.length === 0) return [];
 
     for (const locale of company.locations) {
-        const loc = (await db.doc(`localtions/${locale.id}`).get()).data();
+        const loc = (await db.doc(`locations/${locale.id}`).get()).data();
         locations.push(loc)
     }
 

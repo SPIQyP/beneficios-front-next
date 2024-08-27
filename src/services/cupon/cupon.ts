@@ -105,7 +105,6 @@ export const sendEmail = async (from:string,to:string[],html:string, subject:str
         await SendEmail(mail)
         return true
     }catch(e) {
-        console.log("ERROR AL ENVIAR!! -->>> ",e)
         return false
     }
 }

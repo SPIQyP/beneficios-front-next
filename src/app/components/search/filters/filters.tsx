@@ -11,9 +11,9 @@ const Filters = () => {
     const searchClient = algoliasearch(APPID,APIKEY)
     return (
         <>
-            <InstantSearch
+            {/* <InstantSearch
             searchClient={searchClient}
-            indexName="pre_spiqyp_companies"
+            indexName="companies"
             routing={true}
             insights={true}
             >
@@ -35,7 +35,7 @@ const Filters = () => {
                 
             </div>   
                         
-            </InstantSearch>
+            </InstantSearch> */}
         </>
     )
 }
